@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="util/util.js"></script>
     <link rel="stylesheet" href="jtemplate/JTemplate.css">
     <script src="jtemplate/JTemplate.js"></script>
 </head>
@@ -32,14 +33,14 @@
         <!-- Main template END -->
         
         <!-- test template -->
-        <div class="target2" data-jly-template="{{ firstTemplate @ obj }}"  data-jly-test="{{ obj.hasComponent }}"></div>
+        <div class="target2" data-jly-template="{{ firstTemplate2 @ obj }}"  data-jly-test="{{ obj.hasComponent }}"></div>
         <li data-jly-template="{{ injectTemplate @ item }}" data-index="{{itemList.index}}" data-count="{{ itemList.count}}" data-jly-text="{{item @ context='HTML' }}"></li>
         <!-- test template -->
     </div>
 
-    <div class="jtemplates" data-jly-componentName="component1">
+    <div class="jtemplates" data-jly-componentName="component2">
         <!-- Main template -->
-        <div class="target1" data-jly-template="{{ firstTemplate @ obj }}" data-jly-test="{{ obj.hasComponent }}">
+        <div class="target1" data-jly-template="{{ 'firstTemplate' @ obj }}" data-jly-test="{{ obj.hasComponent }}">
             <div data-jly-test="{{ obj.img.hasImg }}">
                 <img src="temp" alt="" data-jly-attribute="{{ obj.img.imgAttr }}">
             </div>
@@ -58,7 +59,7 @@
         <!-- Main template END -->
         
         <!-- test template -->
-        <div class="target2" data-jly-template="{{ firstTemplate @ obj }}"  data-jly-test="{{ obj.hasComponent }}"></div>
+        <div class="target2" data-jly-template="{{ firstTemplate2 @ obj }}"  data-jly-test="{{ obj.hasComponent }}"></div>
         <li data-jly-template="{{ injectTemplate @ item }}" data-index="{{itemList.index}}" data-count="{{ itemList.count}}" data-jly-text="{{item @ context='HTML' }}"></li>
         <!-- test template -->
     </div>
