@@ -10,10 +10,17 @@
             }
     
             return result;
-        } 
+        }
+    }
+
+    class ArrayUtils {
+        static hasArray( array ){
+            return array && array.length > 0;
+        }
     }
 
     window.StringUtils = StringUtils;
+    window.ArrayUtils = ArrayUtils;
 })()
 
 

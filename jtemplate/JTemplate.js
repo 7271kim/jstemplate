@@ -14,23 +14,36 @@
             'component' : {}
         }
         
-        static compile(){
-            HTMLparsing();
+        constructor( componentName ){
+            this.componentName = componentName;
+            this.templates = JTemplate.sharedObj.component[componentName];
         }
-    }
 
-    function HTMLparsing(){
-        const templates = document.getElementsByClassName(JTemplate.sharedObj.COMPONENT_CLASS);
-           const sharedObj = JTemplate.sharedObj;
-           const stringUtils = window.StringUtils;
+        injectModel( targetDom, templateName , drawObj ){
+            const stringUtils = window.StringUtils;
+            const arrayUtils = window.ArrayUtils;
+            const childrenDom = parsingChildrenDom( this, templateName , drawObj );
+            if(  arrayUtils.hasArray( targetDom )){
+                
+            } else {
+                throw new Error(`injectModel을 하기 위한 targetDom이 없습니다. injectModel 파라메터를 확인하세요`);
+            }
 
-           while ( templates.length > 0 ){
+        }
+
+        static HTMLWrapperparsing( componentName ){
+            const templates = document.getElementsByClassName(JTemplate.sharedObj.COMPONENT_CLASS);
+            const sharedObj = JTemplate.sharedObj;
+            const stringUtils = window.StringUtils;
+
+            while ( templates.length > 0 ){
                 const templateSection  = templates[0];
                 const parentNode = templateSection.parentElement;
-                let componentName = stringUtils.defaultIfBlank(templateSection.getAttribute(sharedObj.COMPONENT_NAME), '').trim();
-                errCheck( componentName, sharedObj.component, sharedObj.COMPONENT_NAME );
+                let htmlComponentName = stringUtils.defaultIfBlank(templateSection.getAttribute(sharedObj.COMPONENT_NAME), '').trim();
                 
-                const  targetComponent = sharedObj.component[componentName] = {};
+                errCheck( htmlComponentName, sharedObj.component, sharedObj.COMPONENT_NAME );
+                
+                const  targetComponent = sharedObj.component[htmlComponentName] = {};
                 const children = templateSection.children;
                 
                 for( const child of children ){
@@ -45,7 +58,41 @@
                     }
                 }
                 parentNode.removeChild( templateSection )
-           }
+            }
+
+            return new JTemplate( componentName );
+        }
+    }
+    
+    function parsingChildrenDom( classObj, templateName , drawObj ){
+        const stringUtils = window.StringUtils;
+        const template = classObj.templates[templateName];
+        if( templateName && template ){
+            const parseDom = template.HTML;
+            const currentNode = parseDom.cloneNode();
+            const childNode = parseDom.childNode;
+            const recustionData = recursionChild( currentNode, childNode, drawObj, {}, 0 );
+        } else {
+            throw new Error(`templateName이 잘못됐습니다. ${templateName}을 확인하세요`);
+        }
+    };
+
+    function recursionChild( currentNode, childNode, drawObj, variable, depth ){
+        changeTemplateData( currentNode, drawObj, variable, depth );
+    }
+
+    function changeTemplateData ( currentNode, drawObj, variable, depth ){
+        const sharedObj = JTemplate.sharedObj;
+        const componentTemplate = currentNode.getAttribute(sharedObj.COMPONENT_TEMPLATE);
+        if( componentTemplate ){
+            const patternData = getPatternData( componentTemplate, drawObj );
+            if( patternData.length > 1 ){
+                variable[depth] = {};
+                variable[depth][patternData[1]] = drawObj;
+            }
+            console.log(variable);
+            console.log(patternData);
+        }
     }
 
     function getPatternData( inputString, matchObj = {} ){
@@ -69,7 +116,7 @@
                     }
                 }
 
-                if( dotSplit > 1 ){
+                if( dotSplit.length > 1 ){
                     const rightText = dotSplit[1].trim();
                     result.push( rightText )
                 }

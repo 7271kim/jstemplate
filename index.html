@@ -10,6 +10,7 @@
 </head>
 <body>
     <div class="target1" ></div>
+    <div class="target1" ></div>
     <div class="target2" ></div>
     <!--googleon: all-->
     <div class="jtemplates" data-jly-componentName="component1">
@@ -28,6 +29,10 @@
             <p data-jly-unwrap="{{ obj.textUnwrap }}" ><span>{{ '하하하하하'}}</span></p>
             <ul data-jly-list.item="{{obj.list2 }}">
                 <jly data-jly-injection="{{ injectTemplate @ item }}"></jly>
+            </ul>
+
+            <ul data-jly-list.item="{{obj.list3 }}">
+                <li>{{item.text @ context = 'HTML'}}</li>
             </ul>
         </div>
         <!-- Main template END -->
