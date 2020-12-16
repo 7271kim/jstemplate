@@ -2,7 +2,7 @@ window.onload = ()=>{
     
    const templateData =  window.JTemplate.HTMLWrapperparsing( 'component1' );
    const drawObj = {
-       'hasComponent' : false,
+       'hasComponent' : true,
        'img' : {
            hasImg : false,
            'imgAttr' : {
@@ -30,15 +30,13 @@ window.onload = ()=>{
             },
             {
             'text' : '<span>zzzzzzzzzzz22222222</span>'
-        }
-        ]
+             }
+        ],
+        'textVar' : 'hoho'
    }
 
    const targetDom = document.getElementsByClassName('target1');
    
-   console.log(templateData)
    templateData.injectModel( targetDom, 'firstTemplate', drawObj );
-
-
     
 }

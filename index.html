@@ -15,9 +15,10 @@
     <!--googleon: all-->
     <div class="jtemplates" data-jly-componentName="component1">
         <!-- Main template -->
-        <div class="target1" data-jly-template="{{ firstTemplate @ obj }}" data-jly-test="{{ obj.hasComponent }}">
+        <div class="target1" data-jly-template="{{ firstTemplate @ obj }}" data-jly-test.kkk="{{ obj.hasComponent }}" data-jly-var.ttt3 = {{obj.textVar}} >
             <div data-jly-test="{{ obj.img.hasImg }}">
-                <img src="temp" alt="" data-jly-attribute="{{ obj.img.imgAttr }}">
+                <img src="temp" alt="" data-jly-attribute="{{ obj.img.imgAttr }}"> 
+                sssss pppp
             </div>
             <ul data-jly-list.item="{{obj.list }}">
                 <jly data-jly-var.item2="{{ itemList.index}}"></jly>
