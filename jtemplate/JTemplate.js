@@ -89,109 +89,192 @@
                 recursionChild( child, drawObj, variClone );
             }
         }
+        /*
+        if( currentNode.nodeName.indexOf("JLY") >-1 ){
+            while( currentNode.childNodes.length > 0  ){
+                const child = currentNode.childNodes[0];
+                parentNode.insertBefore( child, parentNode.getElementsByTagName('jly')[0]);
+            }
+            parentNode.removeChild(parentNode.getElementsByTagName('jly')[0]);
+            console.log(parentNode);
+        }
+        */
+        
     }
 
-    function changeCurrentNodeToTemplateData ( currentNode, drawObj, variable ){
+    function changeCurrentNodeToTemplateData ( currentNode, drawObj, variable, parentNode ){
         if( !( currentNode.nodeName.indexOf('text') > -1 )){
             const sharedObj = JTemplate.sharedObj;
             const stringUtils = window.StringUtils;
             const arrayUtils = window.ArrayUtils;
             const currentAttrNames = currentNode.getAttributeNames();
-            const compNameIndex = new Array(7).fill(-1);
+            const checkingAttr = [];
+            const compNameIndex = {
+                [sharedObj.COMPONENT_TEMPLATE] : -1,
+                [sharedObj.COMPONENT_VAR] : -1,
+                [sharedObj.COMPONENT_TEST] : -1,
+                [sharedObj.COMPONENT_ATTRIBUTE] : -1,
+                [sharedObj.COMPONENT_TEXT] : -1,
+                [sharedObj.COMPONENT_LIST] : -1,
+                [sharedObj.COMPONENT_REAPEAT] : -1,
+                [sharedObj.COMPONENT_INJECTION] : -1
+            }
             
-            for ( const index in currentAttrNames ){
-                const attrName = currentAttrNames[index];
-                if( attrName.indexOf( sharedObj.COMPONENT_TEMPLATE ) > -1 ){
-                    compNameIndex[0] = parseInt(index);
-                } else if( attrName.indexOf( sharedObj.COMPONENT_VAR ) > -1 ){
-                    compNameIndex[1] = parseInt(index);
-                } else if( attrName.indexOf( sharedObj.COMPONENT_TEST ) > -1) {
-                    compNameIndex[2] = parseInt(index);
-                } else if( attrName.indexOf( sharedObj.COMPONENT_ATTRIBUTE ) > -1 ){
-                    compNameIndex[3] = parseInt(index);
-                } else if( attrName.indexOf(sharedObj.COMPONENT_TEXT) > -1) {
-                    compNameIndex[4] = parseInt(index);
-                } else if( attrName.indexOf(sharedObj.COMPONENT_LIST) > -1 ){
-                    compNameIndex[5] = parseInt(index);
-                } else if( attrName.indexOf(sharedObj.COMPONENT_REAPEAT) > -1 ){
-                    compNameIndex[6] = parseInt(index);
-                } else if( attrName.indexOf(sharedObj.COMPONENT_INJECTION) > -1 ){
-                    compNameIndex[7] = parseInt(index);
+            checkingCurrentAttr ( checkingAttr, compNameIndex, currentAttrNames, currentNode );
+            settingTemplate( currentNode, drawObj, variable, compNameIndex[sharedObj.COMPONENT_TEMPLATE], currentAttrNames );
+
+            let goNext = settingTest( currentNode, drawObj, variable, compNameIndex[sharedObj.COMPONENT_TEST], currentAttrNames );
+
+            if( goNext ){
+                settingVar( currentNode, drawObj, variable, compNameIndex[sharedObj.COMPONENT_VAR], currentAttrNames );
+                settingList( currentNode, drawObj, variable, compNameIndex[sharedObj.COMPONENT_LIST], currentAttrNames );
+            }
+            settingRest( checkingAttr, currentNode, variable);
+        }
+    }
+
+    function settingList( currentNode, drawObj, variable, index, currentAttrNames ){
+        if( index !== -1 ){
+            const attrDotName = currentAttrNames[index];
+            const dotSplitName = dotSplit( attrDotName );
+            const attrName = dotSplitName[0];
+            const attrValue = currentNode.getAttribute(attrDotName);
+            if( attrValue ){
+                const listData = getPatternData( attrValue, variable )[0];
+                const parentDom = document.createElement('div');
+
+                for( const listIndex in listData ){
+                    const item = listData[listIndex];
+                    const variClone = {...variable};
+                    const childNode = currentNode.childNodes;
+                    variClone[dotSplitName[1]] = item;
+                    variClone[dotSplitName[1]+'List'] = {
+                        'index' : parseInt(listIndex),
+                        'count' : parseInt(listIndex)+1
+                    };
+                    console.log(currentNode);
+                    for( const child of childNode ){
+                        recursionChild( child, drawObj, variClone );
+                    }
+                    console.log(currentNode);
                 }
+                /*
+                while( currentNode.childNodes.length > 0 ){
+                    currentNode.removeChild(currentNode.childNodes[0]);
+                }
+
+                while( parentDom.childNodes.length > 0 ){
+                    currentNode.appendChild(parentDom.childNodes[0]);
+                }
+                */
             }
 
-            if( compNameIndex[0] != -1 ){
-                settingTemplate( currentNode, drawObj, variable, compNameIndex[0], currentAttrNames );
-            } 
-            if( compNameIndex[2] != -1 ){
-                if( settingTest( currentNode, drawObj, variable, compNameIndex[2], currentAttrNames ) ){
-                    if( compNameIndex[1] != -1 ){
-                        settingVar( currentNode, drawObj, variable, compNameIndex[1], currentAttrNames );
-                    } 
-                };
+            currentNode.removeAttribute(attrDotName);
+        }
+    }
+
+    function settingRest( checkingAttr, currentNode,variable ){
+        for( const attr of checkingAttr ){
+            const chanedValue = getPatternData( currentNode.getAttribute(attr), variable );
+            currentNode.setAttribute( attr, chanedValue );
+         }
+    }
+
+    function checkingCurrentAttr ( checkingAttr, compNameIndex, currentAttrNames, currentNode ){
+        const sharedObj = JTemplate.sharedObj;
+
+        for ( const index in currentAttrNames ){
+            const attrName = currentAttrNames[index];
+            const attrValue = currentNode.getAttribute(attrName);
+
+            if( attrName.indexOf( sharedObj.COMPONENT_TEMPLATE ) > -1 ){
+                compNameIndex[sharedObj.COMPONENT_TEMPLATE ] = parseInt(index);
+            } else if( attrName.indexOf( sharedObj.COMPONENT_VAR ) > -1 ){
+                compNameIndex[sharedObj.COMPONENT_VAR] == -1 ? compNameIndex[sharedObj.COMPONENT_VAR]=[ parseInt(index) ] : compNameIndex[sharedObj.COMPONENT_VAR].push(parseInt(index));
+            } else if( attrName.indexOf( sharedObj.COMPONENT_TEST ) > -1) {
+                compNameIndex[sharedObj.COMPONENT_TEST] = parseInt(index);
+            } else if( attrName.indexOf( sharedObj.COMPONENT_ATTRIBUTE ) > -1 ){
+                compNameIndex[sharedObj.COMPONENT_ATTRIBUTE] = parseInt(index);
+            } else if( attrName.indexOf(sharedObj.COMPONENT_TEXT) > -1) {
+                compNameIndex[sharedObj.COMPONENT_TEXT]= parseInt(index);
+            } else if( attrName.indexOf(sharedObj.COMPONENT_LIST) > -1 ){
+                compNameIndex[sharedObj.COMPONENT_LIST] = parseInt(index);
+            } else if( attrName.indexOf(sharedObj.COMPONENT_REAPEAT) > -1 ){
+                compNameIndex[sharedObj.COMPONENT_REAPEAT] = parseInt(index);
+            } else if( attrName.indexOf(sharedObj.COMPONENT_INJECTION) > -1 ){
+                compNameIndex[sharedObj.COMPONENT_INJECTION] = parseInt(index);
+            } else if( attrValue.indexOf('}}') > -1 ){
+                checkingAttr.push( attrName );
             }
         }
     }
 
     function settingTest( currentNode, drawObj, variable, index, currentAttrNames ){
-        const attrDotName = currentAttrNames[index];
-        const dotSplitName = dotSplit( attrDotName );
-        const attrName = dotSplitName[0];
-        const attrValue = currentNode.getAttribute(attrDotName);
         let result = true;
-        if( attrValue ){
-            const patternData = getPatternData( attrValue, variable );
-            result = patternData[0];
-            if(dotSplitName.length > 1){
-                variable[dotSplitName[1]] = result;
-            }
+        if( index !== -1 ){
+            const attrDotName = currentAttrNames[index];
+            const dotSplitName = dotSplit( attrDotName );
+            const attrName = dotSplitName[0];
+            const attrValue = currentNode.getAttribute(attrDotName);
+            if( attrValue ){
+                const patternData = getPatternData( attrValue, variable );
+                result = patternData[0];
+                if(dotSplitName.length > 1){
+                    variable[dotSplitName[1]] = result;
+                }
 
-            if( !result && currentNode.parentElement ){
-                currentNode.parentElement.removeChild(currentNode);
+                if( !result && currentNode.parentElement ){
+                    currentNode.parentElement.removeChild(currentNode);
+                }
             }
+            currentNode.removeAttribute(attrDotName);
         }
-        currentNode.removeAttribute(attrDotName);
-
         return result;
     }
     
-    function settingVar( currentNode, drawObj, variable, index, currentAttrNames ){
-        const attrDotName = currentAttrNames[index];
-        const dotSplitName = dotSplit( attrDotName );
-        const attrName = dotSplitName[0];
-        const attrValue = currentNode.getAttribute(attrDotName);
-
-        if( attrValue ){
-            const patternData = getPatternData( attrValue, variable );
-            if(!dotSplitName[1]){
-                throw new Error(`${sharedObj.COMPONENT_VAR}.{변수이름} 형태가 되어야 합니다.`)
+    function settingVar( currentNode, drawObj, variable, indexList, currentAttrNames ){
+        if( indexList !== -1 ){
+            for( const index of indexList ){
+                const attrDotName = currentAttrNames[index];
+                const dotSplitName = dotSplit( attrDotName );
+                const attrName = dotSplitName[0];
+                const attrValue = currentNode.getAttribute(attrDotName);
+    
+                if( attrValue ){
+                    const patternData = getPatternData( attrValue, variable );
+                    if(!dotSplitName[1]){
+                        throw new Error(`${sharedObj.COMPONENT_VAR}.{변수이름} 형태가 되어야 합니다.`)
+                    }
+                    variable[dotSplitName[1]] = patternData[0];
+                }
+    
+                currentNode.removeAttribute(attrDotName);
             }
-            variable[dotSplitName[1]] = patternData[0];
         }
-
-        currentNode.removeAttribute(attrDotName);
     }
 
     function settingTemplate( currentNode, drawObj, variable, index, currentAttrNames ){
-        const attrDotName = currentAttrNames[index];
-        const dotSplitName = dotSplit( attrDotName );
-        const attrName = dotSplitName[0];
-        const attrValue = currentNode.getAttribute(attrDotName);
+        if( index!== -1 ){
+            const attrDotName = currentAttrNames[index];
+            const dotSplitName = dotSplit( attrDotName );
+            const attrName = dotSplitName[0];
+            const attrValue = currentNode.getAttribute(attrDotName);
 
-        if( attrValue ){
-            const patternData = getPatternData( attrValue, variable );
-            if( patternData.length > 1 ){
-                variable[patternData[1]] = drawObj;
-            } else {
-                throw new Error(`${sharedObj.COMPONENT_TEMPLATE} 뒤 @ 를 통해 대표 변수를 설정하세요`)
+            if( attrValue ){
+                const patternData = getPatternData( attrValue, variable );
+                if( patternData.length > 1 ){
+                    variable[patternData[1]] = drawObj;
+                } else {
+                    throw new Error(`${sharedObj.COMPONENT_TEMPLATE} 뒤 @ 를 통해 대표 변수를 설정하세요`)
+                }
             }
-        }
-
         currentNode.removeAttribute(attrDotName);
+        
+        }
     }
 
     function dotSplit( string ){
-        return window.StringUtils.defaultIfBlank(string).split('.');
+        return window.StringUtils.defaultIfBlank(string , '').split('.');
     }
 
     function getPatternData( inputString, matchObj = {} ){
@@ -213,7 +296,9 @@
                         let getData = matchObj;
                         
                         for( const dotText of dotSplitLeft ){
-                            getData = getData[dotText];
+                            if( getData ){
+                                getData = getData[dotText];
+                            }
                         }
 
                         if( getData === null || getData === undefined ){

@@ -15,26 +15,34 @@
     <!--googleon: all-->
     <div class="jtemplates" data-jly-componentName="component1">
         <!-- Main template -->
-        <div class="target1" data-jly-template="{{ firstTemplate @ obj }}" data-jly-test.kkk="{{ obj.hasComponent }}" data-jly-var.ttt3 = {{obj.textVar}} >
-            <div data-jly-test="{{ obj.img.hasImg }}">
+        <div class="target1" data-jly-template="{{ firstTemplate @ obj }}" data-jly-test.kkk="{{ obj.hasComponent }}" data-jly-var.ttt3 = "{{obj.textVar}}" data-jly-var.ttt4 = "{{'asdasd'}}" >
+            <div data-jly-test="{{ obj.img.hasImg }}" dat-zzz="{{ttt3}}" dat-zzz22="{{ttt4}}" >
                 <img src="temp" alt="" data-jly-attribute="{{ obj.img.imgAttr }}"> 
                 sssss pppp
             </div>
             <ul data-jly-list.item="{{obj.list }}">
-                <jly data-jly-var.item2="{{ itemList.index}}"></jly>
-                <li data-index="{{item2}}" data-count="{{ itemList.count}}" data-jly-text="{{item @ context='HTML' }}"></li>
+                <li>aaaaaaaaaaa</li>
+                <jly data-jly-var.item2="{{ itemList.index}}" data-jly-var.item3="{{ 'zzzzzz' }}">
+                    sdasdasd
+                    <li data-index="{{item2}}" test= "{{item3}}" data-count="{{ itemList.count}}" data-jly-text="{{item @ context='HTML' }}"></li>
+                </jly>
+                <li>bbbbbbbbbbb</li>
+                <jly data-jly-var.item2="{{ itemList.index}}" data-jly-var.item3="{{ 'zzzzzz' }}">
+                    zzzzzzzzzzzzzzzzzzzzz
+                    <li data-index="{{item2}}" test= "{{item3}}" data-count="{{ itemList.count}}" data-jly-text="{{item @ context='HTML' }}"></li>
+                </jly>
             </ul>
             <p>{{obj.text @ context ='text' }}</p>
             <p>{{ '하하하하하'}}</p>
             <p data-jly-reapeat.item="{{ obj.reapeatList }}" data-index="{{ itemList.index}}" data-count="{{ itemList.count}}" data-jly-text="{{item @ context='HTML' }}"></p>
             <p data-jly-unwrap="{{ obj.textUnwrap }}" ><span>{{ '하하하하하'}}</span></p>
-            <ul data-jly-list.item="{{obj.list2 }}">
+            <!-- <ul data-jly-list.item="{{obj.list2 }}">
                 <jly data-jly-injection="{{ injectTemplate @ item }}"></jly>
             </ul>
 
             <ul data-jly-list.item="{{obj.list3 }}">
                 <li>{{item.text @ context = 'HTML'}}</li>
-            </ul>
+            </ul> -->
         </div>
         <!-- Main template END -->
         
@@ -44,8 +52,7 @@
         <!-- test template -->
     </div>
 
-    <div class="jtemplates" data-jly-componentName="component2">
-        <!-- Main template -->
+   <!--  <div class="jtemplates" data-jly-componentName="component2">
         <div class="target1" data-jly-template="{{ 'firstTemplate' @ obj }}" data-jly-test="{{ obj.hasComponent }}">
             <div data-jly-test="{{ obj.img.hasImg }}">
                 <img src="temp" alt="" data-jly-attribute="{{ obj.img.imgAttr }}">
@@ -62,13 +69,9 @@
                 <jly data-jly-injection="{{ injectTemplate @ item }}"></jly>
             </ul>
         </div>
-        <!-- Main template END -->
-        
-        <!-- test template -->
         <div class="target2" data-jly-template="{{ firstTemplate2 @ obj }}"  data-jly-test="{{ obj.hasComponent }}"></div>
         <li data-jly-template="{{ injectTemplate @ item }}" data-index="{{itemList.index}}" data-count="{{ itemList.count}}" data-jly-text="{{item @ context='HTML' }}"></li>
-        <!-- test template -->
-    </div>
+    </div> -->
     <!--googleoff: all-->
 
     <script src="app.js"></script>
