@@ -13,8 +13,18 @@
         }
     }
 
+    class ObjectUtils {
+        static isEmpty( obj ){
+            return Object.keys(obj).length === 0;
+        }
+
+        static isNotEmpty( obj ){
+            return Object.keys(obj).length !== 0;
+        }
+    }
+
     class ArrayUtils {
-        static hasArray( array ){
+        static isNotEmpty( array ){
             return array && array.length > 0;
         }
     }
@@ -51,6 +61,7 @@
     window.StringUtils = StringUtils;
     window.ArrayUtils = ArrayUtils;
     window.NodeUtils = NodeUtils;
+    window.ObjectUtils = ObjectUtils;
 })()
 
 
