@@ -89,16 +89,10 @@
                 recursionChild( child, drawObj, variClone );
             }
         }
-        /*
+        
         if( currentNode.nodeName.indexOf("JLY") >-1 ){
-            while( currentNode.childNodes.length > 0  ){
-                const child = currentNode.childNodes[0];
-                parentNode.insertBefore( child, parentNode.getElementsByTagName('jly')[0]);
-            }
-            parentNode.removeChild(parentNode.getElementsByTagName('jly')[0]);
-            console.log(parentNode);
+            window.NodeUtils.removeOnlyCurrentNode(currentNode);
         }
-        */
         
     }
 
@@ -141,32 +135,27 @@
             const attrValue = currentNode.getAttribute(attrDotName);
             if( attrValue ){
                 const listData = getPatternData( attrValue, variable )[0];
-                const parentDom = document.createElement('div');
+                const currentNodeClone = currentNode.cloneNode(true);
+                
+                window.NodeUtils.removeAllChilden(currentNode);
 
                 for( const listIndex in listData ){
                     const item = listData[listIndex];
                     const variClone = {...variable};
-                    const childNode = currentNode.childNodes;
+                    const childNode = currentNodeClone.childNodes;
                     variClone[dotSplitName[1]] = item;
                     variClone[dotSplitName[1]+'List'] = {
                         'index' : parseInt(listIndex),
                         'count' : parseInt(listIndex)+1
                     };
-                    console.log(currentNode);
                     for( const child of childNode ){
-                        recursionChild( child, drawObj, variClone );
+                        const cloneChild = child.cloneNode(true);
+                        const parentDom = document.createElement('div');
+                        parentDom.appendChild(cloneChild);
+                        recursionChild( parentDom, drawObj, variClone );
+                        window.NodeUtils.AtoBMoveChilden(currentNode, parentDom);
                     }
-                    console.log(currentNode);
                 }
-                /*
-                while( currentNode.childNodes.length > 0 ){
-                    currentNode.removeChild(currentNode.childNodes[0]);
-                }
-
-                while( parentDom.childNodes.length > 0 ){
-                    currentNode.appendChild(parentDom.childNodes[0]);
-                }
-                */
             }
 
             currentNode.removeAttribute(attrDotName);
@@ -272,7 +261,7 @@
         
         }
     }
-
+    
     function dotSplit( string ){
         return window.StringUtils.defaultIfBlank(string , '').split('.');
     }

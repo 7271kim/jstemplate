@@ -19,8 +19,38 @@
         }
     }
 
+    class NodeUtils {
+        static removeOnlyCurrentNode( currentNode ){
+            const parentNode = currentNode.parentNode;
+            
+            while( currentNode.childNodes.length > 0  ){
+                const child = currentNode.childNodes[0];
+                parentNode.insertBefore( child, currentNode);
+            }
+            parentNode.removeChild( currentNode );
+        }
+
+        static AtoBMoveChilden( targetNode, removeNode ){
+            if( removeNode ){
+                while( removeNode.childNodes.length > 0 ){
+                    targetNode.appendChild(removeNode.childNodes[0]);
+                }
+            }
+        }
+
+        static removeAllChilden( currentNode ){
+            if( currentNode && currentNode.childNodes.length > 0 ){
+                while( currentNode.childNodes.length > 0 ){
+                    currentNode.removeChild(currentNode.childNodes[0]);
+                }
+            }
+        }
+
+    }
+
     window.StringUtils = StringUtils;
     window.ArrayUtils = ArrayUtils;
+    window.NodeUtils = NodeUtils;
 })()
 
 
