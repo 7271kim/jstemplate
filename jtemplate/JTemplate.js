@@ -16,7 +16,7 @@
         
         constructor( componentName ){
             this.componentName = componentName;
-            this.templates = JTemplate.sharedObj.component[componentName];
+            this.templates = JTemplate.sharedObj.component[componentName] || {};
         }
 
         injectModel( targetDom, templateName , drawObj ){
@@ -108,6 +108,7 @@
 
     function parsingChildrenDom( classObj, templateName , drawObj ){
         const stringUtils = window.StringUtils;
+
         const template = classObj.templates[templateName];
         if( templateName && template ){
             const parseDom = template.HTML;
