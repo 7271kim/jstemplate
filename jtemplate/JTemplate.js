@@ -173,14 +173,26 @@
             settingRest( checkingAttr, currentNode, variable);
         } else if(currentNode.nodeType === 3){
             const textContent = currentNode.textContent.trim();
+            let isHTML = false;
             if( textContent.indexOf('}}') > -1){
-                const matchText = getPatternData( currentNode.textContent.trim(), variable );
-                currentNode.textContent = matchText[0];
-                if( matchText.length > 1 ){
-                    const nextText = matchText[1].toLowerCase();
-                    if( nextText.indexOf('context') > -1 && nextText.indexOf('html') > -1 ){
-                        currentNode.parentNode.innerHTML = matchText[0];
+                const innerTextSplit = textContent.replace(/{{([^{}]*)}}/g, function( matchString, innerText , offset, fullText ){
+                    if( innerText ){
+                        const temp = getPatternData( matchString, variable );
+                        if( temp.length > 1){
+                            const contextText = temp[1].toLowerCase();
+                            if( contextText.indexOf('context') > -1 && contextText.indexOf('html') > -1 ){
+                                isHTML = true;
+                            }
+                        }
+                        return temp[0];
+                    } else {
+                        return innerText;
                     }
+                });
+                if( isHTML ){
+                    currentNode.parentNode.innerHTML = innerTextSplit;
+                } else {
+                    currentNode.textContent = innerTextSplit;
                 }
             }
         }
@@ -408,6 +420,16 @@
 
     function getPatternData( inputString, matchObj = {} ){
         const result = [];
+        if( inputString && inputString.search(/([*%\/+\-()]|==|<=|>=|>|<|&&|\|\|)/) > -1 ){
+            inputString = inputString.replace(/([^*%\/+\-()=<>\|& {}]*)/g, function( matchString, innerText , offset, fullText ){
+                if( innerText ){
+                    return getPatternData( `{{${innerText}}}`, matchObj );
+                } else {
+                    return innerText;
+                }
+            })
+        }
+
         if( inputString ){
             const arrPattern  = inputString.match(/{{([^{{}}]*)}}/);
             
@@ -415,9 +437,9 @@
                 const replaceText = arrPattern[1].trim();
                 const atSplit = replaceText.split('@');
                 const leftText = atSplit[0].trim();
-
+                
                 if( leftText.indexOf('\'') > -1 ){
-                    result.push( leftText.replace(/\'/g , '') );
+                    result.push( window.Calculator.cal (leftText.replace(/\'/g , '')) );
                 } else {
                     const dotSplitLeft = dotSplit( leftText );
                     let matchText = '';
@@ -442,7 +464,7 @@
                     if( matchText !== null && matchText !== undefined){
                         result.push( matchText )
                     } else {
-                        result.push( leftText )
+                        result.push( window.Calculator.cal (leftText) )
                     }
                 }
 
@@ -468,5 +490,7 @@
         }
     }
 
+    
+   
     window.JTemplate = JTemplate;
 })();

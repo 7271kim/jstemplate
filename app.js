@@ -3,6 +3,8 @@ window.onload = ()=>{
    const templateData =  window.JTemplate.HTMLWrapperparsing( 'component1' );
    const drawObj = {
        'hasComponent' : true,
+       'temp' : 1,
+       'temp2' : 2,
        'img' : {
            hasImg : true,
            'imgAttr' : {
@@ -46,5 +48,4 @@ window.onload = ()=>{
    const targetDom = document.getElementsByClassName('target1');
    
    templateData.injectModel( targetDom, 'firstTemplate', drawObj );
-    
 }
