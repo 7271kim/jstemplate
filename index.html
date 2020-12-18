@@ -32,17 +32,14 @@
                     <li data-index="{{item2}}" test= "{{item3}}" data-count="{{ itemList.count}}" data-jly-text="{{item @ context='HTML' }}"></li>
                 </jly>
             </ul>
-            <p>{{obj.text @ context ='text' }}</p>
+            <p>{{obj.text @ context ='html' }}</p>
             <p>{{ '하하하하하'}}</p>
             <p data-jly-reapeat.item="{{ obj.reapeatList }}" data-index="{{ itemList.index}}" data-count="{{ itemList.count}}" data-jly-text="{{item @ context='HTML' }}"></p>
+            <p data-jly-reapeat.item2="{{ obj.reapeatList2 }}" data-index="{{ item2List.index}}" data-count="{{ item2List.count}}" data-jly-text="{{item2.text @ context='HTML' }}"></p>
             <p data-jly-unwrap="{{ obj.textUnwrap }}" ><span>{{ '하하하하하'}}</span></p>
-            <!-- <ul data-jly-list.item="{{obj.list2 }}">
-                <jly data-jly-injection="{{ injectTemplate @ item }}"></jly>
-            </ul>
-
             <ul data-jly-list.item="{{obj.list3 }}">
                 <li>{{item.text @ context = 'HTML'}}</li>
-            </ul> -->
+            </ul>
         </div>
         <!-- Main template END -->
         

@@ -64,6 +64,45 @@
         }
     }
     
+    function settingVar( currentNode, drawObj, variable, indexList, currentAttrNames ){
+        if( indexList !== -1 ){
+            for( const index of indexList ){
+                const attrDotName = currentAttrNames[index];
+                const dotSplitName = dotSplit( attrDotName );
+                const attrName = dotSplitName[0];
+                const attrValue = currentNode.getAttribute(attrDotName);
+    
+                if( attrValue ){
+                    const patternData = getPatternData( attrValue, variable );
+                    if(!dotSplitName[1]){
+                        throw new Error(`${sharedObj.COMPONENT_VAR}.{변수이름} 형태가 되어야 합니다.`)
+                    }
+                    variable[dotSplitName[1]] = patternData[0];
+                }
+    
+                currentNode.removeAttribute(attrDotName);
+            }
+        }
+    }
+
+    function settingAttr( currentNode, drawObj, variable, index, currentAttrNames ){
+        if( index !== -1 ){
+            const attrDotName = currentAttrNames[index];
+            const dotSplitName = dotSplit( attrDotName );
+            const attrName = dotSplitName[0];
+            const attrValue = currentNode.getAttribute(attrDotName);
+
+            if( attrValue ){
+                const patternData = getPatternData( attrValue, variable )[0];
+                for( const key in patternData ){
+                    currentNode.setAttribute( key, patternData[key] );
+                }
+            }
+
+            currentNode.removeAttribute(attrDotName);
+        }
+    }
+
     function parsingChildrenDom( classObj, templateName , drawObj ){
         const stringUtils = window.StringUtils;
         const template = classObj.templates[templateName];
@@ -73,6 +112,7 @@
             parentDom.appendChild( parseDom.cloneNode(true) );
             recursionChild( parentDom, drawObj, {} );
 
+            console.log(parentDom);
             return parentDom;
 
         } else {
@@ -96,34 +136,92 @@
         
     }
 
-    function changeCurrentNodeToTemplateData ( currentNode, drawObj, variable, parentNode ){
-        if( !( currentNode.nodeName.indexOf('text') > -1 )){
-            const sharedObj = JTemplate.sharedObj;
-            const stringUtils = window.StringUtils;
-            const arrayUtils = window.ArrayUtils;
-            const currentAttrNames = currentNode.getAttributeNames();
-            const checkingAttr = [];
-            const compNameIndex = {
-                [sharedObj.COMPONENT_TEMPLATE] : -1,
-                [sharedObj.COMPONENT_VAR] : -1,
-                [sharedObj.COMPONENT_TEST] : -1,
-                [sharedObj.COMPONENT_ATTRIBUTE] : -1,
-                [sharedObj.COMPONENT_TEXT] : -1,
-                [sharedObj.COMPONENT_LIST] : -1,
-                [sharedObj.COMPONENT_REAPEAT] : -1,
-                [sharedObj.COMPONENT_INJECTION] : -1
+    function changeCurrentNodeToTemplateData ( currentNode, drawObj, variable ){
+        try {
+            if( currentNode.nodeType === 1 ){
+                const sharedObj = JTemplate.sharedObj;
+                const stringUtils = window.StringUtils;
+                const arrayUtils = window.ArrayUtils;
+                const currentAttrNames = currentNode.getAttributeNames();
+                const checkingAttr = [];
+                const compNameIndex = {
+                    [sharedObj.COMPONENT_TEMPLATE] : -1,
+                    [sharedObj.COMPONENT_VAR] : -1,
+                    [sharedObj.COMPONENT_TEST] : -1,
+                    [sharedObj.COMPONENT_ATTRIBUTE] : -1,
+                    [sharedObj.COMPONENT_TEXT] : -1,
+                    [sharedObj.COMPONENT_LIST] : -1,
+                    [sharedObj.COMPONENT_REAPEAT] : -1,
+                    [sharedObj.COMPONENT_INJECTION] : -1
+                }
+                
+                checkingCurrentAttr ( checkingAttr, compNameIndex, currentAttrNames, currentNode );
+                settingTemplate( currentNode, drawObj, variable, compNameIndex[sharedObj.COMPONENT_TEMPLATE], currentAttrNames );
+    
+                let goNext = settingTest( currentNode, drawObj, variable, compNameIndex[sharedObj.COMPONENT_TEST], currentAttrNames );
+    
+                if( goNext ){
+                    settingVar( currentNode, drawObj, variable, compNameIndex[sharedObj.COMPONENT_VAR], currentAttrNames );
+                    settingAttr( currentNode, drawObj, variable, compNameIndex[sharedObj.COMPONENT_ATTRIBUTE], currentAttrNames );
+                    settingList( currentNode, drawObj, variable, compNameIndex[sharedObj.COMPONENT_LIST], currentAttrNames );
+                    settingReapeat( currentNode, drawObj, variable, compNameIndex[sharedObj.COMPONENT_REAPEAT], currentAttrNames );
+                }
+                settingRest( checkingAttr, currentNode, variable);
+            } else if(currentNode.nodeType === 3){
+                const textContent = currentNode.textContent.trim();
+                if( textContent.indexOf('}}') > -1){
+                    const matchText = getPatternData( currentNode.textContent.trim(), variable );
+                    currentNode.textContent = matchText[0];
+                    if( matchText.length > 1 ){
+                        const nextText = matchText[1].toLowerCase();
+                        if( nextText.indexOf('context') > -1 && nextText.indexOf('html') > -1 ){
+                            currentNode.parentNode.innerHTML = matchText[0];
+                        }
+                    }
+                }
             }
+        } catch (error) {
+            throw new Error(`${currentNode.data} 중 ${error.message}`);
+        }
+        
+    }
+
+    function settingReapeat( currentNode, drawObj, variable, index, currentAttrNames ){
+        if( index !== -1 ){
+            const attrDotName = currentAttrNames[index];
+            const dotSplitName = dotSplit( attrDotName );
+            const attrName = dotSplitName[0];
+            const attrValue = currentNode.getAttribute(attrDotName);
+            currentNode.removeAttribute(attrDotName);
             
-            checkingCurrentAttr ( checkingAttr, compNameIndex, currentAttrNames, currentNode );
-            settingTemplate( currentNode, drawObj, variable, compNameIndex[sharedObj.COMPONENT_TEMPLATE], currentAttrNames );
+            if( attrValue ){
+                const listData = getPatternData( attrValue, variable )[0];
 
-            let goNext = settingTest( currentNode, drawObj, variable, compNameIndex[sharedObj.COMPONENT_TEST], currentAttrNames );
+                for( const listIndex in listData ){
+                    const item = listData[listIndex];
+                    const variClone = {...variable};
+                    const parentDom = document.createElement('div');
+                    const currentNodeClone = currentNode.cloneNode(true);
 
-            if( goNext ){
-                settingVar( currentNode, drawObj, variable, compNameIndex[sharedObj.COMPONENT_VAR], currentAttrNames );
-                settingList( currentNode, drawObj, variable, compNameIndex[sharedObj.COMPONENT_LIST], currentAttrNames );
+                    parentDom.appendChild(currentNodeClone);
+
+                    const children = parentDom.childNodes;
+                    variClone[dotSplitName[1]] = item;
+                    variClone[dotSplitName[1]+'List'] = {
+                        'index' : parseInt(listIndex),
+                        'count' : parseInt(listIndex)+1
+                    };
+                    recursionChild( children[0], drawObj, variClone );
+                    currentNode.parentNode.insertBefore(children[0],currentNode);
+                }
+
+                currentNode.parentNode.removeChild(currentNode);
+                while(currentNode.attributes.length > 0) {
+                    currentNode.removeAttribute(currentNode.attributes[0].name);
+                }   
             }
-            settingRest( checkingAttr, currentNode, variable);
+
+            
         }
     }
 
@@ -154,6 +252,7 @@
                         parentDom.appendChild(cloneChild);
                         recursionChild( parentDom, drawObj, variClone );
                         window.NodeUtils.AtoBMoveChilden(currentNode, parentDom);
+                        
                     }
                 }
             }

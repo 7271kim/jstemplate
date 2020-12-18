@@ -16,6 +16,14 @@ window.onload = ()=>{
             '^^',
             '^^^^^'
         ],
+        'reapeatList2' : [
+            {
+                'text' : '^^'
+            },
+            {
+                'text' : '^^^^^'
+            }
+        ],
         'list' :[
             'zzzzzzzzz',
             'ddddddddddd'
@@ -29,7 +37,7 @@ window.onload = ()=>{
                 'text' : '<span>zzzzzzzzzzz</span>'
             },
             {
-            'text' : '<span>zzzzzzzzzzz22222222</span>'
+                'text' : '<span>zzzzzzzzzzz22222222</span>'
              }
         ],
         'textVar' : 'hoho'
