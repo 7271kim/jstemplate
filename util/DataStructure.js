@@ -29,6 +29,9 @@ class Stack {
 
 }
 
+/**
+ * Calculator.cal('2*4') : String input 계산기
+ */
 class Calculator {
     static postfix( inputString ){
         let result = [inputString];

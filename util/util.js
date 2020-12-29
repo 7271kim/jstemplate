@@ -1,3 +1,20 @@
+/**
+ * 1. StringUtils
+ *  - defaultIfBlank( input string값, 디폴트 값 ) : input이 null일 시 원하는 디폴트 값 세팅
+ * 
+ * 2. ObjectUtils
+ * - isEmpty ( object ) : 객체가 빈 객체인지 확인
+ * - isNotEmpty ( object ) : 객체가 빈 객체인지 확인
+ * 
+ * 3. ArrayUtils
+ * - isNotEmpty ( 배열 ) : 배열이 빈 배열인지 확인 
+ * 
+ * 4. NodeUtils
+ * - removeOnlyCurrentNode( currentNode ) : DOM 노드 중 현재 자신 노드만 제거. 즉 parent <-> 자기자식 연결.
+ * - AtoBMoveChilden( targetNode, removeNode ) : removeNode의 자식들을 targetNode에 추가 
+ * - removeAllChilden( currentNode ) : 현재 자기 노드의 모든 자식 노드 제거
+ */
+
 class StringUtils {
     static defaultIfBlank( string, defaultStr ){
         let result = string;
