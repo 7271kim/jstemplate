@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="util/DataStructure.js"></script>
-    <script src="util/util.js"></script>
     <link rel="stylesheet" href="jtemplate/JTemplate.css">
-    <script src="jtemplate/JTemplate.js"></script>
+    
+    <script src="util/DataStructure.js" type="module"></script>
+    <script src="util/util.js" type="module"></script>
+    <script src="jtemplate/JTemplate.js" type="module"></script>
 </head>
 <body>
     <div class="target1" ></div>
@@ -48,6 +49,6 @@
         <div class="target2" data-jly-template="{{ firstTemplate2 @ obj }}"  data-jly-test="{{ obj.hasComponent }}"></div>
         <li data-jly-template="{{ injectTemplate @ comeItem }}" data-index="{{comeItem.itemList.index}}" data-count="{{ comeItem.itemList.count}}" data-jly-text="{{comeItem.item @ context='HTML' }}"></li>
     </div>
-    <script src="app.js"></script>
+    <script src="app.js" type="module"></script>
 </body>
 </html>

@@ -1,7 +1,9 @@
+import { JTemplate } from "./jtemplate/JTemplate.js";
+
 window.onload = ()=>{
-    
-   const templateData =  window.JTemplate.HTMLWrapperparsing( 'component1' );
-   const drawObj = {
+
+    const templateData =  JTemplate.HTMLWrapperparsing( 'component1' );
+    const drawObj = {
        'hasComponent' : true,
        'temp' : 1,
        'temp2' : 2,
