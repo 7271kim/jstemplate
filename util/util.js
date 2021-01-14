@@ -13,6 +13,8 @@
  * - removeOnlyCurrentNode( currentNode ) : DOM 노드 중 현재 자신 노드만 제거. 즉 parent <-> 자기자식 연결.
  * - AtoBMoveChilden( targetNode, removeNode ) : removeNode의 자식들을 targetNode에 추가 
  * - removeAllChilden( currentNode ) : 현재 자기 노드의 모든 자식 노드 제거
+ * - getWidth(element, type) : type > width(순수 width), inner( width + padding ), outer( width + padding + boder ), full( width + padding + boder + margin )
+ * - getHeight(element, type) : type > height(순수 height), inner( height + padding ), outer( height + padding + boder ), full( height + padding + boder + margin )
  */
 
 class StringUtils {
@@ -70,6 +72,32 @@ class NodeUtils {
                 currentNode.removeChild(currentNode.childNodes[0]);
             }
         }
+    }
+    
+    static getWidth(element, type) {
+        if (type === 'inner')  // .innerWidth()
+	        return element.clientWidth;
+	      else if (type === 'outer')  // .outerWidth()
+	        return element.offsetWidth;
+	      let s = window.getComputedStyle(element, null);
+	      if (type === 'width')  // .width()
+	        return element.clientWidth - parseInt(s.getPropertyValue('padding-left')) - parseInt(s.getPropertyValue('padding-right'));
+	      else if (type === 'full')  // .outerWidth(includeMargins = true)
+	        return element.offsetWidth + parseInt(s.getPropertyValue('margin-left')) + parseInt(s.getPropertyValue('margin-right'));
+	      return null;
+    }
+    
+    static getWidth(element, type) {
+	    if (type === 'inner')  // .innerWidth()
+	        return element.clientWidth;
+	      else if (type === 'outer')  // .outerWidth()
+	        return element.offsetWidth;
+	      let s = window.getComputedStyle(element, null);
+	      if (type === 'width')  // .width()
+	        return element.clientWidth - parseInt(s.getPropertyValue('padding-left')) - parseInt(s.getPropertyValue('padding-right'));
+	      else if (type === 'full')  // .outerWidth(includeMargins = true)
+	        return element.offsetWidth + parseInt(s.getPropertyValue('margin-left')) + parseInt(s.getPropertyValue('margin-right'));
+	      return null;
     }
 
 }
