@@ -51,8 +51,8 @@ data-jly-text : Node의 text를 결정한다. @ context='html/text'를 통해 HT
 data-jly-list : Node 내부 자식을 반복 시킨다.
     ex) <ul data-jly-list.item="{{obj.list }}"><li>{{item.text}}</li></ul>
 
-data-jly-reapeat : 현재 노드를 반복 시킨다.
-    ex) <p data-jly-reapeat.item="{{ obj.reapeatList }}">{{item.temp}}</p>
+data-jly-repeat : 현재 노드를 반복 시킨다.
+    ex) <p data-jly-repeat.item="{{ obj.reapeatList }}">{{item.temp}}</p>
 
 data-jly-var : 노드 하위 자식들에서 사용할 변수를 세팅한다.
     ex) <div class="target1 ppp" data-jly-var.ttt4 = "{{'asdasd'}}" >{{tt4}}</div>
