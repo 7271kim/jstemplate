@@ -312,8 +312,19 @@ function settingList( currentNode, drawObj, variable, index, currentAttrNames, c
 
 function settingRest( checkingAttr, currentNode,variable ){
     for( const attr of checkingAttr ){
-        const chanedValue = getPatternData( currentNode.getAttribute(attr), variable );
-        currentNode.setAttribute( attr, chanedValue );
+        let changeData = currentNode.getAttribute(attr);
+       
+        if( changeData ){
+            changeData = changeData.replace(/({{([^{{}}]*)}})/g, function( matchString, group1, group2 , offset , fullText){
+                if( matchString ){
+                    return getPatternData( matchString, variable );
+                } else {
+                    return innerText;
+                }
+            })
+        }
+        
+        currentNode.setAttribute( attr, changeData );
         }
 }
 
