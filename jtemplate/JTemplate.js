@@ -122,22 +122,26 @@ function parsingChildrenDom( classObj, templateName , drawObj ){
 };
 
 function recursionChild( currentNode, drawObj, variable, classObj ){
-    changeCurrentNodeToTemplateData( currentNode, drawObj, variable, classObj );
-    const childNodes = currentNode.childNodes;
-    if( childNodes && childNodes.length > 0  ){
-        for( const child of childNodes ){
-            const variClone = {...variable};
-            recursionChild( child, drawObj, variClone, classObj );
+    const result = changeCurrentNodeToTemplateData( currentNode, drawObj, variable, classObj );
+
+    if( result ){
+        const childNodes = currentNode.childNodes;
+        if( childNodes && childNodes.length > 0  ){
+            for( const child of childNodes ){
+                const variClone = {...variable};
+                recursionChild( child, drawObj, variClone, classObj );
+            }
+        }
+        
+        if( currentNode.nodeName.indexOf("JLY") >-1 ){
+            NodeUtils.removeOnlyCurrentNode(currentNode);
         }
     }
-    
-    if( currentNode.nodeName.indexOf("JLY") >-1 ){
-        NodeUtils.removeOnlyCurrentNode(currentNode);
-    }
-    
 }
 
 function changeCurrentNodeToTemplateData ( currentNode, drawObj, variable, classObj ){
+    let result = true;
+
     if( currentNode.nodeType === 1 ){
         const sharedObj = JTemplate.sharedObj;
         const currentAttrNames = currentNode.getAttributeNames();
@@ -167,6 +171,8 @@ function changeCurrentNodeToTemplateData ( currentNode, drawObj, variable, class
             settingInjection( currentNode, drawObj, variable, compNameIndex[sharedObj.COMPONENT_INJECTION], currentAttrNames, classObj );
         }
         settingRest( checkingAttr, currentNode, variable);
+
+        result = goNext;
     } else if(currentNode.nodeType === 3){
         const textContent = currentNode.textContent.trim();
         let isHTML = false;
@@ -192,6 +198,8 @@ function changeCurrentNodeToTemplateData ( currentNode, drawObj, variable, class
             }
         }
     }
+
+    return result;
     
 }
 
@@ -365,8 +373,12 @@ function settingTest( currentNode, drawObj, variable, index, currentAttrNames ){
         const attrName = dotSplitName[0];
         const attrValue = currentNode.getAttribute(attrDotName);
         if( attrValue ){
-            const patternData = getPatternData( attrValue, variable );
-            result = patternData[0];
+            const patternData = getPatternData( attrValue, variable )[0];
+            if( Array.isArray(patternData) ){
+                result = patternData.length > 0;
+            } else {
+                result = patternData;
+            }
             if(dotSplitName.length > 1){
                 variable[dotSplitName[1]] = result;
             }

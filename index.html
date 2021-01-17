@@ -34,6 +34,18 @@
                     <li data-index="{{item2}}" test= "{{item3}}" data-count="{{ itemList.count}}" data-jly-text="{{item @ context='HTML' }}"></li>
                 </jly>
             </ul>
+            <ul data-jly-list.item="{{obj.list }}" data-jly-test="{{obj.list }}">
+                <li>aaaaaaaaaaa</li>
+                <jly data-jly-var.item2="{{ itemList.index}}" data-jly-var.item3="{{ 'zzzzzz' }}">
+                    sdasdasd
+                    <li data-index="{{item2}}" test= "{{item3}}" data-count="{{ itemList.count}}" data-jly-text="{{item @ context='HTML' }}"></li>
+                </jly>
+                <li>bbbbbbbbbbb</li>
+                <jly data-jly-var.item2="{{ itemList.index}}" data-jly-var.item3="{{ 'zzzzzz' }}">
+                    zzzzzzzzzzzzzzzzzzzzz
+                    <li data-index="{{item2}}" test= "{{item3}}" data-count="{{ itemList.count}}" data-jly-text="{{item @ context='HTML' }}"></li>
+                </jly>
+            </ul>
             <p>{{obj.text @ context ='html' }}</p>
             <p>{{ '하하하하하'}}</p>
             <ul data-jly-list.item="{{obj.list2 }}">
